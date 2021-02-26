@@ -1,0 +1,301 @@
+package Compi1_Proyecto1;
+import java_cup.runtime.*; //REVISAR ESTO
+import java.util.*;
+import java.io.*;
+//import Compiladores1_Practica1.----.------;
+
+
+	parser code
+	{:
+		//public Lista encabezado = new Lista();
+		public static String error;
+		public static String error_lexico;
+    	public static List<String> crear_usuarios =  new ArrayList<String>();
+    	public static List<String> crear_tiendas =  new ArrayList<String>();
+    	public static List<String> crear_productos =  new ArrayList<String>();
+    	public static List<String> modificar_tiendas =  new ArrayList<String>();
+    	public static List<String> modificar_productos =  new ArrayList<String>();
+    	public static List<String> modificar_productos_dos =  new ArrayList<String>();
+    	public static String sucursal;
+    	public static List<String> tablas =  new ArrayList<String>();
+    
+        
+
+		//metodo al que se llama automaticamente ante algun error sintactico
+	public void syntax_error(Symbol s){
+
+		error = "Error en la Linea " + (s.right) +" Columna "+ s.left + ". Identificador "
+		+s.value +" " + s.sym + " no reconocido.";
+		
+		error_lexico = " Identificador " +s.value + " no reconocido.";
+
+		System.out.println("Error en la Linea " + s.right +" Columna "+ s.left + ". Identificador "
+		+s.value +" " + s.sym + " no reconocido." );
+		//UIBuilder.mListaErroresSin.add(new ErroresLexicos(1, "" + s.value, s.right, s.left));
+	}
+
+		//metodo al que llama cuando ya no es posible recuperarse de errores
+
+	public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+		
+		error = "Error en la linea " + (s.right)+ " Columna "+ s.left +". Identificador " + 
+		s.value + " no reconocido.";
+
+		System.out.println("uError en la linea " + s.right+ " Columna "+ s.left +". Identificador" + 
+		s.value + " no reconocido.");
+	}
+
+	:}
+
+	action code
+	{:		
+		//public  Usuarios usu_comodin = new Usuarios();
+    	//public  Hashtable<Integer, Usuarios> lst_usuarios = new Hashtable<Integer, Usuarios>();
+
+	:}
+
+//REVISAR POSIBLE CASTEO 
+terminal  re_request, re_reply, re_InicioUsuario, re_CrearUsuario, re_id, re_password, re_nombre, re_apellido, re_telefono, re_email, re_direccion, re_Usuario, re_access;
+terminal re_registro, re_tipo, comilla, re_tienda, re_codigo, re_propietario, re_img, re_crear, re_modificacion, re_eliminar, re_modificar, re_producto, re_cantidad, re_marca;
+terminal re_color, re_tamano, re_sucursal, re_Rq, re_Ptn, re_query, re_Extraer_de, re_donde, re_Tienda, re_Producto, re_Vacio, re_error, re_descripcion, re_get, re_lista, sig_or, sig_and;
+terminal sig_N, sig_puntoycoma, sig_abre_parentesis, sig_cierra_parentesis, sig_abre_llave, sig_cierra_llave, sig_guion, sig_mas, sig_por, sig_div, sig_dolar;
+terminal sig_igual, sig_coma, sig_igualigual, sig_True, sig_False, sig_Fail, id, enteros, cadena, password, correo, error_flex;
+
+														//*****************//error
+														//, sig_dospuntos
+
+
+non terminal PRINCIPAL, CODIGO, LINEA, PETICION, USUARIO, INICIO, CREAR, TIENDA, DOS, LSDOS, SIGUE, JA, CRUD, CREAR_T, PRODUCTO, DOS_PRO, JO, LSPRO, SIGUE_PRO, JU, CREAR_P, EE, CRUD_SER, PET_DOS, JAT, SERVIDOR, INICIO_SER, LOG, VALORES_LOG, TIENDA_SER;
+non terminal PRODUCTO_SER, AMBOS, AM, CONSULTAS, TABLA, EL, OPCIONES, AA, BOLEANOS;
+
+non terminal LISTAINICIO, LISTACREAR, LISTAINCIO_SER, LISTACREAR_T, EXTRA, EXTRADOS, LISTATIENDA, KA, LISTAPETICION, LISTACREAR_P;
+
+precedence left sig_mas, sig_guion, sig_or;
+precedence left sig_por, sig_div, sig_and;
+precedence nonassoc sig_igualigual;
+//precedence nonassoc  sig_dolar;
+
+
+
+PRINCIPAL ::= CODIGO {: System.out.println("Sentencencia analizada correctamente. Sin errores"); 
+						:}
+			| /*EMPTY*/;
+
+CODIGO ::= CODIGO LINEA
+			|LINEA;
+
+LINEA ::= sig_dolar re_request sig_dolar PETICION sig_dolar re_request sig_guion sig_dolar
+		| sig_dolar re_reply sig_dolar SERVIDOR sig_dolar re_reply sig_guion sig_dolar
+		|CONSULTAS:a {: String val = a.toString(); parser.tablas.add(val); :};
+
+PETICION ::= PETICION LISTAPETICION
+		|LISTAPETICION;
+
+LISTAPETICION ::= USUARIO
+			|PRODUCTO
+			|sig_dolar re_get PET_DOS sig_guion sig_dolar
+			|sig_dolar re_tienda re_tipo sig_igual cadena sig_dolar CREAR_T:a sig_dolar re_tienda sig_guion sig_dolar  {: String val = a.toString(); parser.crear_tiendas.add(val); System.out.println( "FINAL CREAR_TIENDAS: " +  val); :}
+			|sig_dolar re_tienda KA:a  sig_guion sig_dolar  {: String val = a.toString(); parser.modificar_tiendas.add(val); System.out.println( "FINAL MODIFICAR_TIENDAS: " +  val); :} //_----------------------
+			|sig_dolar re_producto re_tipo sig_igual cadena sig_dolar CREAR_P:a sig_dolar re_producto sig_guion sig_dolar {: String val = a.toString(); parser.crear_productos.add(val); System.out.println( "FINAL CREAR_PRODUCTOS: " +  val); :}
+			|sig_dolar re_tienda re_id sig_igual enteros:b sig_dolar JO:a sig_dolar re_tienda sig_guion sig_dolar {: String val = a.toString(); String val2 = b.toString(); parser.sucursal = val2; parser.modificar_productos_dos.add(val); System.out.println( "FINAL MODIFICAR_PRODUCTOS: " +  val); :}
+			|sig_dolar re_producto SIGUE_PRO:a sig_guion sig_dolar  {: String val = a.toString(); parser.modificar_productos.add(val); System.out.println( "FINAL MODIFICAR_PRODUCTOS: " +  val); :}; //_----------------------; //+++++++
+
+USUARIO ::= sig_dolar re_InicioUsuario sig_dolar INICIO sig_dolar re_InicioUsuario sig_guion sig_dolar  //parser.cadena_usuarios += val + "\n";
+			|sig_dolar re_CrearUsuario sig_dolar CREAR:a sig_dolar re_CrearUsuario sig_guion sig_dolar {: String val = a.toString(); parser.crear_usuarios.add(val); System.out.println( "FINAL CREAR_USUARIOS: " +  val); :};
+ 
+INICIO ::= INICIO LISTAINICIO  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		|LISTAINICIO;
+
+
+LISTAINICIO ::= sig_dolar re_id sig_dolar enteros sig_dolar re_id sig_guion sig_dolar
+		| sig_dolar re_password sig_dolar cadena sig_dolar re_password sig_guion sig_dolar;
+
+CREAR ::= CREAR:a LISTACREAR:b {: RESULT = a.toString() + ";" + b.toString(); :}
+		|LISTACREAR:a {: RESULT = a.toString(); :};		
+
+LISTACREAR ::= sig_dolar re_id sig_dolar enteros:a sig_dolar re_id sig_guion sig_dolar {: RESULT = "ID," + a.toString() ; :}
+		|sig_dolar re_nombre sig_dolar cadena:a sig_dolar re_nombre sig_guion sig_dolar {: RESULT = "NOMBRE," + a.toString(); :}
+		|sig_dolar re_apellido sig_dolar cadena:a sig_dolar re_apellido sig_guion sig_dolar {: RESULT =  "APELLIDO," + a.toString(); :}
+		|sig_dolar re_password sig_dolar cadena:a sig_dolar re_password sig_guion sig_dolar {: RESULT =  "PASSWORD," + a.toString(); :}
+		|sig_dolar re_telefono sig_dolar enteros:a sig_dolar re_telefono sig_guion sig_dolar {: RESULT = "TELEFONO," + a.toString(); :}
+		|sig_dolar re_email sig_dolar correo:a sig_dolar re_email sig_guion sig_dolar {: RESULT = "EMAIL," + a.toString(); :}
+		|sig_dolar re_direccion sig_dolar cadena:a sig_dolar re_direccion sig_guion sig_dolar {: RESULT = "DIRECCION," + a.toString(); :};
+
+
+KA ::= KA:a sig_coma JA:b {: RESULT = a.toString() + ";" + b.toString(); :}
+	|JA:a {: RESULT = a.toString(); :};
+
+
+JA ::= re_tipo sig_igual cadena:a {: RESULT = "TIPO," + a.toString() ; :}
+	|re_codigo sig_igual enteros:a {: RESULT = "CODIGO," + a.toString() ; :}
+	|re_propietario sig_igual enteros:a {: RESULT = "PROPIETARIO," + a.toString() ; :}
+	|re_nombre sig_igual cadena:a {: RESULT = "NOMBRE," + a.toString() ; :}
+	|re_direccion sig_igual cadena:a {: RESULT = "DIRECCION," + a.toString() ; :}
+	|re_telefono sig_igual enteros:a {: RESULT = "TELEFONO," + a.toString() ; :};
+
+
+CREAR_T ::= CREAR_T:a LISTACREAR_T:b {: RESULT = a.toString() + ";" + b.toString(); :}
+		|LISTACREAR_T:a {: RESULT = a.toString(); :};
+
+
+LISTACREAR_T ::= sig_dolar re_codigo sig_dolar enteros:a sig_dolar re_codigo sig_guion sig_dolar {: RESULT = "CODIGO," + a.toString() ; :}
+		|sig_dolar re_propietario sig_dolar enteros:a sig_dolar re_propietario sig_guion sig_dolar {: RESULT = "PROPIETARIO," + a.toString() ; :}
+		|sig_dolar re_nombre sig_dolar cadena:a sig_dolar re_nombre sig_guion sig_dolar {: RESULT = "NOMBRE," + a.toString() ; :}
+		|sig_dolar re_direccion sig_dolar cadena:a sig_dolar re_direccion sig_guion sig_dolar {: RESULT = "DIRECCION," + a.toString() ; :}
+		|sig_dolar re_telefono sig_dolar enteros:a sig_dolar re_telefono sig_guion sig_dolar {: RESULT = "TELEFONO," + a.toString() ; :}
+		|sig_dolar re_img sig_dolar cadena:a sig_dolar re_img sig_guion sig_dolar {: RESULT = "IMG," + a.toString() ; :};  //***************************************************************
+
+
+JO ::= JO:a LSPRO:b {: RESULT = a.toString() + "#" + b.toString(); :}
+	|LSPRO:a  {: RESULT = a.toString(); :};
+
+LSPRO ::= sig_dolar re_producto SIGUE_PRO:a sig_guion sig_dolar {: RESULT = a.toString(); :};
+
+SIGUE_PRO ::= SIGUE_PRO:a sig_coma JU:b {: RESULT = a.toString() + ";" + b.toString(); :}
+			|JU:a {: RESULT = a.toString(); :};
+
+JU ::= re_tipo sig_igual cadena:a {: RESULT = "TIPO," + a.toString() ; :}
+	|re_codigo sig_igual EE:a {: RESULT = "CODIGO," + a.toString() ; :}
+	|re_nombre sig_igual cadena:a {: RESULT = "NOMBRE," + a.toString() ; :}
+	|re_cantidad sig_igual EE:a {: RESULT = "CANTIDAD," + a.toString() ; :}
+	|re_marca sig_igual cadena:a {: RESULT = "MARCA," + a.toString() ; :}
+	|re_color sig_igual cadena:a {: RESULT = "COLOR," + a.toString() ; :}
+	|re_tamano sig_igual EE:a {: RESULT = "TAMANO," + a.toString() ; :}
+	|re_sucursal sig_igual EE:a {: RESULT = "SUCURSAL," + a.toString() ; :};
+
+CREAR_P ::= CREAR_P:a LISTACREAR_P:b {: RESULT = a.toString() + ";" + b.toString(); :}
+		|LISTACREAR_P:a {: RESULT = a.toString(); :};
+
+LISTACREAR_P ::= sig_dolar re_codigo sig_dolar EE:a sig_dolar re_codigo sig_guion sig_dolar {: RESULT = "CODIGO," + a.toString() ; :}
+		|sig_dolar re_nombre sig_dolar cadena:a sig_dolar re_nombre sig_guion sig_dolar {: RESULT = "NOMBRE," + a.toString() ; :}
+		|sig_dolar re_cantidad sig_dolar EE:a sig_dolar re_cantidad sig_guion sig_dolar {: RESULT = "CANTIDAD," + a.toString() ; :}
+		|sig_dolar re_marca sig_dolar cadena:a sig_dolar re_marca sig_guion sig_dolar {: RESULT = "MARCA," + a.toString() ; :}
+		|sig_dolar re_color sig_dolar cadena:a sig_dolar re_color sig_guion sig_dolar {: RESULT = "COLOR," + a.toString() ; :}
+		|sig_dolar re_tamano sig_dolar EE:a sig_dolar re_tamano sig_guion sig_dolar {: RESULT = "TAMANO," + a.toString() ; :}
+		|sig_dolar re_img sig_dolar cadena:a sig_dolar re_img sig_guion sig_dolar  {: RESULT = "IMG," + a.toString() ; :} //***********************************************************path
+		|sig_dolar re_sucursal sig_dolar EE:a sig_dolar re_sucursal sig_guion sig_dolar {: RESULT = "SUCURSAL," + a.toString() ; :};
+
+EE ::= sig_abre_llave AA:a sig_cierra_llave {: RESULT = a.toString() ; System.out.println(a.toString() + "CALCULOOSSSS");:}
+	|AA:a {: RESULT = a.toString() ;  System.out.println(a.toString() + "CALCULOOSSSS"); :};
+
+AA ::= AA:a sig_mas AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 + val2; RESULT = String.valueOf(re);:}
+	|AA:a sig_guion AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 - val2; RESULT = String.valueOf(re);:}
+	|AA:a sig_por AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 * val2; RESULT = String.valueOf(re);:}
+	|AA:a sig_div AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 / val2; RESULT = String.valueOf(re);:}
+	|re_Rq sig_abre_parentesis AA:a sig_cierra_parentesis {: float val1 = Float.parseFloat((String)a) ;float re = (float)Math.sqrt(val1);  int val2 = Math.round(re); RESULT = String.valueOf(val2); :}
+	|re_Ptn sig_abre_parentesis AA:a sig_cierra_parentesis  {:int val1 = Integer.parseInt((String)a); int re = (int)Math.pow(val1,2); RESULT = String.valueOf(re);:}
+	|sig_abre_parentesis AA:a sig_cierra_parentesis {: RESULT = a.toString() ; :}
+	|enteros:a {: RESULT = a.toString() ; :};  //*********************************************************************decimal
+
+CRUD_SER ::= re_registro
+		|re_modificar
+		|re_eliminar;
+
+PET_DOS ::= PET_DOS JAT 
+		|JAT;
+
+JAT ::= re_tipo sig_igual cadena
+	| re_propietario sig_igual enteros
+	|re_sucursal sig_igual enteros;
+
+SERVIDOR ::= sig_dolar re_Usuario sig_dolar INICIO_SER sig_dolar re_Usuario sig_guion sig_dolar
+		|TIENDA_SER
+		|PRODUCTO_SER 
+		|sig_dolar re_error sig_dolar sig_dolar re_descripcion sig_dolar cadena sig_dolar re_descripcion sig_guion sig_dolar sig_dolar re_error sig_guion sig_dolar
+		|sig_dolar re_lista sig_dolar AMBOS sig_dolar re_lista sig_guion sig_dolar;
+
+INICIO_SER ::= INICIO_SER LISTAINCIO_SER
+			|LISTAINCIO_SER;
+
+LISTAINCIO_SER ::= sig_dolar re_id sig_dolar enteros sig_dolar re_id sig_guion sig_dolar
+			|sig_dolar re_access sig_dolar VALORES_LOG sig_dolar re_access sig_guion sig_dolar
+			|sig_dolar re_registro re_id sig_igual enteros sig_dolar BOLEANOS sig_dolar re_registro sig_guion sig_dolar;
+
+
+BOLEANOS ::= sig_True
+			|sig_False;
+
+VALORES_LOG ::= BOLEANOS
+			|sig_Fail;
+
+TIENDA_SER ::= sig_dolar re_tienda sig_dolar sig_dolar CRUD_SER re_id sig_igual enteros sig_dolar BOLEANOS sig_dolar CRUD_SER sig_guion sig_dolar sig_dolar re_tienda sig_guion sig_dolar;
+
+PRODUCTO_SER ::= sig_dolar re_producto sig_dolar sig_dolar CRUD_SER re_id sig_igual enteros re_sucursal sig_igual enteros sig_dolar BOLEANOS sig_dolar CRUD_SER sig_guion sig_dolar sig_dolar re_producto sig_guion sig_dolar;
+
+AMBOS ::= AMBOS AM
+		|AM;
+
+AM ::= sig_dolar re_tienda sig_dolar CREAR_T sig_dolar re_tienda sig_guion sig_dolar
+	| sig_dolar re_producto sig_dolar CREAR_P sig_dolar re_producto sig_guion sig_dolar;
+
+
+CONSULTAS ::= sig_dolar re_query sig_dolar re_Extraer_de TABLA:a sig_puntoycoma sig_dolar re_query sig_guion sig_dolar {: RESULT = a.toString() ; :}
+		|sig_dolar re_query sig_dolar re_Extraer_de TABLA re_donde EL sig_puntoycoma sig_dolar re_query sig_guion sig_dolar;
+
+TABLA ::= re_Usuario:a {: RESULT =  a.toString() ; :}
+		|re_tienda:a {: RESULT = a.toString() ; :}
+		|re_producto:a {: RESULT =  a.toString() ; :};
+
+EL ::= EL:a sig_or EL:b {:String val1 = a.toString();	
+						  String val2 = b.toString(); 
+
+						  //if(){
+
+						  //}
+
+
+
+
+
+
+
+						  //RESULT = String.valueOf(re);
+
+						:}
+	|EL:a sig_and EL:b
+	|sig_N sig_abre_parentesis EL:a sig_cierra_parentesis 
+	|EL:a sig_igualigual EL:b
+	|EL:a sig_mas EL:b  {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 + val2; RESULT = String.valueOf(re);:}
+	|EL:a sig_guion EL:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 - val2; RESULT = String.valueOf(re);:} 
+	|EL:a sig_por EL:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 * val2; RESULT = String.valueOf(re);:}
+	|EL:a sig_div EL:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 / val2; RESULT = String.valueOf(re);:}
+	|re_Rq sig_abre_parentesis EL:a sig_cierra_parentesis {:RESULT = a.toString();:}
+	|re_Ptn sig_abre_parentesis EL:a sig_cierra_parentesis {:RESULT = a.toString();:}
+	|sig_abre_parentesis EL:a sig_cierra_parentesis {:RESULT = a.toString();:}
+	|sig_abre_llave EL:a sig_cierra_llave {:RESULT = a.toString();:}
+	|enteros:a {:RESULT = a.toString();:}
+	|id:a {:RESULT = a.toString();:}
+	|cadena:a {:RESULT = a.toString();:}
+	|re_Vacio:a {:RESULT = a.toString();:};
+
+
+
+
+
+//ENCABEZADO ::= menorque re_encabezado POSICION
+//			| /*EMPTY*/;
+
+//////////////////////////////////////////////////////////////////////////
+			/*AQUI ME QUEDE:
+			-	HACER LA LISTA:
+			-hacer la lista dinamica con la clase Nodo
+			-revisar si el RESULT  me devuelve el valor o el nodo
+			-en el metodo insertar debo insertar este nodo ENVIADO
+			-comprobar si enlazo bien la lista*/
+
+//JA ::= POSICION_VAL:a dospuntos id:b igual CADENAYNUMERO:c 
+//	{:
+		//Info datos = new Info(a, b, c);
+		//Nodo nd = new Nodo(datos, null);
+		//parser.encabezado.enqueue(datos);
+
+		/*
+		-hacer con el metodo desde aqui->>>>>
+		->entonces el RESULT no lo utilizo?
+		->la directiva que hay que usar para llamar al metodo
+		-y si quiero usar el RESULT, ver como jalar el valor desde la clase java
+		*/
+
+		//RESULT = nd;  //toString();
+
+//	:};
