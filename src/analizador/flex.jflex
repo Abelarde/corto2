@@ -22,17 +22,17 @@ Combinado = ([a-zA-Z_]([a-zA-Z_]|[0-9])([a-zA-Z_]|[0-9])([a-zA-Z_]|[0-9])([a-zA-
 
 %%
 
-"("         {  return new Symbol(sym.sig_abre_parentesis , yycolumn, yyline+1,  yytext());}
-")"         {  return new Symbol(sym.sig_cierra_parentesis , yycolumn, yyline+1,  yytext());}
-"-"         {  return new Symbol(sym.sig_guion , yycolumn, yyline+1,  yytext());}
-"+"         {  return new Symbol(sym.sig_mas , yycolumn, yyline+1,  yytext());}
-"*"         {  return new Symbol(sym.sig_por , yycolumn, yyline+1,  yytext());}
-"/"         {  return new Symbol(sym.sig_div , yycolumn, yyline+1,  yytext());}
+"("         {  return new Symbol(sym.left_par , yycolumn, yyline+1,  yytext());}
+")"         {  return new Symbol(sym.right_par , yycolumn, yyline+1,  yytext());}
+"-"         {  return new Symbol(sym.menos , yycolumn, yyline+1,  yytext());}
+"+"         {  return new Symbol(sym.mas , yycolumn, yyline+1,  yytext());}
+"*"         {  return new Symbol(sym.por , yycolumn, yyline+1,  yytext());}
+"/"         {  return new Symbol(sym.div , yycolumn, yyline+1,  yytext());}
 
 
 {id}        { return new Symbol(sym.id, yycolumn, yyline+1,  yytext());}
 {Enteros}+  { return new Symbol(sym.enteros, yycolumn, yyline+1,  yytext());}
-{Combinado} { return new Symbol(sym.id, yycolumn, yyline+1,  yytext());}
+{Combinado} { return new Symbol(sym.combinado, yycolumn, yyline+1,  yytext());}
 
 
 {Espacio}   {/*ignore*/}

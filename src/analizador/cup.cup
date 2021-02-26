@@ -3,7 +3,6 @@ import java_cup.runtime.*;
 import java.util.*;
 import java.io.*;
 
-
 parser code
 {:
 public static String error;
@@ -40,38 +39,28 @@ action code
 {:
     //public  Usuarios usu_comodin = new Usuarios();
     //public  Hashtable<Integer, Usuarios> lst_usuarios = new Hashtable<Integer, Usuarios>();
-
 :} 
 
-//REVISAR POSIBLE CASTEO 
-terminal  re_request, re_reply, re_InicioUsuario, re_CrearUsuario, re_id, re_password, re_nombre, re_apellido, re_telefono, re_email, re_direccion, re_Usuario, re_access;
+terminal  left_par, right_par, menos , mas , por , div , id, enteros, combinado;
+non terminal new_temp S, E, T, F;
 
-non terminal PRINCIPAL, CODIGO, LINEA, PETICION, USUARIO, INICIO, CREAR, TIENDA, DOS, LSDOS, SIGUE, JA, CRUD, CREAR_T, PRODUCTO, DOS_PRO, JO, LSPRO, SIGUE_PRO, JU, CREAR_P, EE, CRUD_SER, PET_DOS, JAT, SERVIDOR, INICIO_SER, LOG, VALORES_LOG, TIENDA_SER;
-
-precedence left sig_mas, sig_guion, sig_or;
-precedence left sig_por, sig_div, sig_and;
-precedence nonassoc sig_igualigual;
-//precedence nonassoc  sig_dolar;
-
-
-
-S ::= E {: System.out.println("Sentencencia analizada correctamente. Sin errores");
+S ::= E:a {: System.out.println("Sentencencia analizada correctamente. Sin errores");
            System.out.println(E.C3D); 
-        :};
+          :};
 
-E ::= E mas T { E.TMP = new_temp(); E.C3D = E1.C3D + T.C3D + E.TMP + “=” + E1.TMP “+” + T.TMP;}
-    | E menos T { E.TMP = new_temp();  E.C3D = E1.C3D + T.C3D + E.TMP + “=” + E1.TMP “-” + T.TMP;}
-    |T { E.TMP = T.TMP; E.C3D = T.C3D; };
+E ::= E:a mas T:b { RESULT = new new_temp("", );
+E.TMP = new_temp(); E.C3D = E1.C3D + T.C3D + E.TMP + “=” + E1.TMP “+” + T.TMP;}
+    | E:a menos T:b { E.TMP = new_temp();  E.C3D = E1.C3D + T.C3D + E.TMP + “=” + E1.TMP “-” + T.TMP;}
+    |T:a { E.TMP = T.TMP; E.C3D = T.C3D; };
 
-T ::= T por F {T.TMP = new_temp(); T.C3D = T1.C3D + F.C3D + T.TMP + “=” + T1.TMP “*” + F.TMP;}
-    | T div F {T.TMP = new_temp(); T.C3D = T1.C3D + F.C3D + T.TMP + “=” + T1.TMP “/” + F.TMP;}
-    |F {T.TMP = F.TMP; T.C3D = F.C3D;};
+T ::= T:a por F:b {T.TMP = new_temp(); T.C3D = T1.C3D + F.C3D + T.TMP + “=” + T1.TMP “*” + F.TMP;}
+    | T:a div F:b {T.TMP = new_temp(); T.C3D = T1.C3D + F.C3D + T.TMP + “=” + T1.TMP “/” + F.TMP;}
+    |F:a {RESULT.TMP = a.TMP; RESULT.C3D = a.C3D;};
 
-F ::= left_par E right_par {F.TMP = E.TMP; F.C3D = E.C3D;}
-    |id {F.TMP = id.lex_value; F.C3D = "";}
-    |digito; {F.TMP = digito.lex_value; F.C3D = "";}
-
-
+F ::= left_par E:a right_par { RESULT.TMP = a.TMP; RESULT.C3D = a.C3D;}
+    |id:a {RESULT.TMP = a.toString(); RESULT.C3D = "";}
+    |enteros:a {RESULT.TMP = a.toString(); RESULT.C3D = "";}
+    |combinado:a {RESULT.TMP = a.toString(); RESULT.C3D = "";};
 
 
 
