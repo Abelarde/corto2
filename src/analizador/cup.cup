@@ -2,13 +2,15 @@ package analizador;
 import java_cup.runtime.*;
 import java.util.*;
 import java.io.*;
+import corto2.new_temp;
+
 
 parser code
 {:
 public static String error;
 public static String error_lexico;
 //public static List<String> crear_usuarios =  new ArrayList<String>();
-           
+         
 
 //metodo al que se llama automaticamente ante algun error sintactico
 public void syntax_error(Symbol s){
@@ -41,76 +43,24 @@ action code
     //public  Hashtable<Integer, Usuarios> lst_usuarios = new Hashtable<Integer, Usuarios>();
 :} 
 
-terminal  left_par, right_par, menos , mas , por , div , id, enteros, combinado;
+terminal String left_par, right_par, menos , mas , por , div , id, enteros, combinado;
 non terminal new_temp S, E, T, F;
 
+start with S;
+
 S ::= E:a {: System.out.println("Sentencencia analizada correctamente. Sin errores");
-           System.out.println(E.C3D); 
+             System.out.print(a.C3D); 
           :};
 
-E ::= E:a mas T:b { RESULT = new new_temp("", );
-E.TMP = new_temp(); E.C3D = E1.C3D + T.C3D + E.TMP + “=” + E1.TMP “+” + T.TMP;}
-    | E:a menos T:b { E.TMP = new_temp();  E.C3D = E1.C3D + T.C3D + E.TMP + “=” + E1.TMP “-” + T.TMP;}
-    |T:a { E.TMP = T.TMP; E.C3D = T.C3D; };
+E ::= E:a mas T:b {: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "+" + b.TMP); :}
+    | E:a menos T:b{: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "-" + b.TMP); :}
+    |T:a {: RESULT = a; :};
 
-T ::= T:a por F:b {T.TMP = new_temp(); T.C3D = T1.C3D + F.C3D + T.TMP + “=” + T1.TMP “*” + F.TMP;}
-    | T:a div F:b {T.TMP = new_temp(); T.C3D = T1.C3D + F.C3D + T.TMP + “=” + T1.TMP “/” + F.TMP;}
-    |F:a {RESULT.TMP = a.TMP; RESULT.C3D = a.C3D;};
+T ::= T:a por F:b {: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "*" + b.TMP); :}
+    | T:a div F:b {: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "/" + b.TMP); :}
+    |F:a {: RESULT = a; :};
 
-F ::= left_par E:a right_par { RESULT.TMP = a.TMP; RESULT.C3D = a.C3D;}
-    |id:a {RESULT.TMP = a.toString(); RESULT.C3D = "";}
-    |enteros:a {RESULT.TMP = a.toString(); RESULT.C3D = "";}
-    |combinado:a {RESULT.TMP = a.toString(); RESULT.C3D = "";};
-
-
-
-
-EE ::= sig_abre_llave AA:a sig_cierra_llave {: RESULT = a.toString() ; System.out.println(a.toString() + "CALCULOOSSSS");:}
-	|AA:a {: RESULT = a.toString() ;  System.out.println(a.toString() + "CALCULOOSSSS"); :};
-
-AA ::= AA:a sig_mas AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 + val2; RESULT = String.valueOf(re);:}
-	|AA:a sig_guion AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 - val2; RESULT = String.valueOf(re);:}
-	|AA:a sig_por AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 * val2; RESULT = String.valueOf(re);:}
-	|AA:a sig_div AA:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 / val2; RESULT = String.valueOf(re);:}
-	|re_Rq sig_abre_parentesis AA:a sig_cierra_parentesis {: float val1 = Float.parseFloat((String)a) ;float re = (float)Math.sqrt(val1);  int val2 = Math.round(re); RESULT = String.valueOf(val2); :}
-	|re_Ptn sig_abre_parentesis AA:a sig_cierra_parentesis  {:int val1 = Integer.parseInt((String)a); int re = (int)Math.pow(val1,2); RESULT = String.valueOf(re);:}
-	|sig_abre_parentesis AA:a sig_cierra_parentesis {: RESULT = a.toString() ; :}
-	|enteros:a {: RESULT = a.toString() ; :};  //*********************************************************************decimal
-
-
-TABLA ::= re_Usuario:a {: RESULT =  a.toString() ; :}
-		|re_tienda:a {: RESULT = a.toString() ; :}
-		|re_producto:a {: RESULT =  a.toString() ; :};
-
-EL ::= EL:a sig_or EL:b {:String val1 = a.toString();	
-						  String val2 = b.toString(); 
-
-						  //if(){
-
-						  //}
-
-
-
-
-
-
-
-						  //RESULT = String.valueOf(re);
-
-						:}
-	|EL:a sig_and EL:b
-	|sig_N sig_abre_parentesis EL:a sig_cierra_parentesis 
-	|EL:a sig_igualigual EL:b
-	|EL:a sig_mas EL:b  {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 + val2; RESULT = String.valueOf(re);:}
-	|EL:a sig_guion EL:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 - val2; RESULT = String.valueOf(re);:} 
-	|EL:a sig_por EL:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 * val2; RESULT = String.valueOf(re);:}
-	|EL:a sig_div EL:b {:int val1 = Integer.parseInt((String)a);	int val2 = Integer.parseInt((String)b); int re = val1 / val2; RESULT = String.valueOf(re);:}
-	|re_Rq sig_abre_parentesis EL:a sig_cierra_parentesis {:RESULT = a.toString();:}
-	|re_Ptn sig_abre_parentesis EL:a sig_cierra_parentesis {:RESULT = a.toString();:}
-	|sig_abre_parentesis EL:a sig_cierra_parentesis {:RESULT = a.toString();:}
-	|sig_abre_llave EL:a sig_cierra_llave {:RESULT = a.toString();:}
-	|enteros:a {:RESULT = a.toString();:}
-	|id:a {:RESULT = a.toString();:}
-	|cadena:a {:RESULT = a.toString();:}
-	|re_Vacio:a {:RESULT = a.toString();:};
-
+F ::= left_par E:a right_par {: RESULT = a; :}
+    |id:a {: RESULT = new new_temp(String.valueOf(a), ""); :}
+    |enteros:a {:RESULT = new new_temp(String.valueOf(a), ""); :}
+    |combinado:a {:RESULT = new new_temp(String.valueOf(a), ""); :};

@@ -36,4 +36,4 @@ Combinado = ([a-zA-Z_]([a-zA-Z_]|[0-9])([a-zA-Z_]|[0-9])([a-zA-Z_]|[0-9])([a-zA-
 
 
 {Espacio}   {/*ignore*/}
-.	{System.out.println("ERROR: " + yytext()); return new Symbol(sym.error_flex, yycolumn, yyline+1,  yytext());}
+.           {System.out.println("ERROR: " + yytext()); return new Symbol(sym.error, yycolumn, yyline+1,  yytext());}

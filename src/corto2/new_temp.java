@@ -11,9 +11,20 @@ package corto2;
  */
 public class new_temp {
     
-    private String TMP;
-    private String C3D;
+    public static int CONTADOR;
+    public String TMP = new String();
+    public String C3D =  new String();
 
+    public new_temp(boolean nuevo, String C3Dcarry, String C3Dnew) {
+        CONTADOR = CONTADOR + 1;
+        this.TMP = "t"+String.valueOf(CONTADOR);
+        this.C3D = C3Dcarry + this.TMP + C3Dnew + "\n";
+    }
+
+    public new_temp(String TMP, String C3D){
+        this.TMP = TMP;
+        this.C3D = C3D;
+    }
     
     
 }
