@@ -54,7 +54,7 @@ public class new_temp {
 Escribiremos una cadena de entrada con operaciones aritmeticas para que sea analizado por nuestro parser. 
 
 <p align="center">
-  <img src="img/CadenaEntrada.png" width="800" alt="Cadena de Entrada">
+  <img src="img/cadenaEntrada.png" width="800" alt="Cadena de Entrada">
 </p>
 
 Podemos observar que al ser analizado por las clases expuestas anteriormente obtenemos una cadena de salida con temporales generados por nuestra clase auxiliar "new_temporal" y obtenemos el codigo de tres direcciones de nuestra cadena completa. 
