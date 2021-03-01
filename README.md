@@ -51,14 +51,82 @@ public class new_temp {
 ```
 ## Ejemplo
 
-Escribiremos una cadena de entrada con operaciones aritmeticas para que sea analizado por nuestro parser. 
-
+Escribiremos varias cadenas de entrada con su respectivo resultado en C3D generado para cada uno. 
+```
+(a + b) * (a + c) 
+```
 <p align="center">
-  <img src="img/CadenaEntrada.png" width="800" alt="Cadena de Entrada">
+  <img src="img/resultado1.png" width="800" alt="C3D resultado">
 </p>
 
-Podemos observar que al ser analizado por las clases expuestas anteriormente obtenemos una cadena de salida con temporales generados por nuestra clase auxiliar "new_temporal" y obtenemos el codigo de tres direcciones de nuestra cadena completa. 
-
+```
+x * x
+```
 <p align="center">
-  <img src="img/resultado.png" width="800" alt="Resultado obtenido">
+  <img src="img/resultado2.png" width="800" alt="C3D resultado">
 </p>
+
+```
+y * y 
+```
+<p align="center">
+  <img src="img/resultado3.png" width="800" alt="C3D resultado">
+</p>
+
+
+```
+x2 + y2
+```
+<p align="center">
+  <img src="img/resultado4.png" width="800" alt="C3D resultado">
+</p>
+
+
+```
+b + c + d
+```
+<p align="center">
+  <img src="img/resultado5.png" width="800" alt="C3D resultado">
+</p>
+
+
+```
+a * a + b * b 
+```
+<p align="center">
+  <img src="img/resultado6.png" width="800" alt="C3D resultado">
+</p>
+
+
+```
+5 + 2 * b
+```
+<p align="center">
+  <img src="img/resultado7.png" width="800" alt="C3D resultado">
+</p>
+
+
+```
+6 + 7 * 10+5 / 1
+```
+<p align="center">
+  <img src="img/resultado8.png" width="800" alt="C3D resultado">
+</p>
+
+
+```
+((7 + 9)/(((3 + 1) * (6 + 7) + 8) * 7) / 9) + 100
+```
+<p align="center">
+  <img src="img/resultado9.png" width="800" alt="C3D resultado">
+</p>
+
+```
+7 * 9 - 89 + 63
+```
+<p align="center">
+  <img src="img/resultado10.png" width="800" alt="C3D resultado">
+</p>
+
+
+

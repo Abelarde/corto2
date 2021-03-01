@@ -24,7 +24,6 @@ public class new_temp {
     public new_temp(String TMP, String C3D){
         this.TMP = TMP;
         this.C3D = C3D;
-    }
-    
+    }    
     
 }

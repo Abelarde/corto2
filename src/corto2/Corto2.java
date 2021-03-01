@@ -22,7 +22,7 @@ public class Corto2 {
         System.out.println("Analizando...");
         corto2.new_temp.CONTADOR = 0;
         try {
-            String texto_analizar = "(3+3)*5/3-1";
+            String texto_analizar = "7 * 9 - 89 + 63";
             AnalizadorSintactico ana = new AnalizadorSintactico(new AnalizadorLexico(new StringReader(texto_analizar)));
             ana.parse();
 
