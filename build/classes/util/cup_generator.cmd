@@ -1,0 +1,1 @@
+java -jar C:\Users\eduab\Desktop\Corto2\lib\JCup.jar -destdir C:\Users\eduab\Desktop\Corto2\src\analizador -parser AnalizadorSintactico -symbols sym C:\Users\eduab\Desktop\Corto2\src\analizador\cup.cup

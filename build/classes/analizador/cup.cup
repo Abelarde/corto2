@@ -1,0 +1,66 @@
+package analizador;
+import java_cup.runtime.*;
+import java.util.*;
+import java.io.*;
+import corto2.new_temp;
+
+
+parser code
+{:
+public static String error;
+public static String error_lexico;
+//public static List<String> crear_usuarios =  new ArrayList<String>();
+         
+
+//metodo al que se llama automaticamente ante algun error sintactico
+public void syntax_error(Symbol s){
+
+error = "Error en la Linea " + (s.right) +" Columna "+ s.left + ". Identificador "
++s.value +" " + s.sym + " no reconocido.";
+
+error_lexico = " Identificador " +s.value + " no reconocido.";
+
+System.out.println("Error en la Linea " + s.right +" Columna "+ s.left + ". Identificador "
++s.value +" " + s.sym + " no reconocido." );
+//UIBuilder.mListaErroresSin.add(new ErroresLexicos(1, "" + s.value, s.right, s.left));
+}
+
+//metodo al que llama cuando ya no es posible recuperarse de errores
+public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+
+error = "Error en la linea " + (s.right)+ " Columna "+ s.left +". Identificador " + 
+s.value + " no reconocido.";
+
+System.out.println("uError en la linea " + s.right+ " Columna "+ s.left +". Identificador" + 
+s.value + " no reconocido.");
+}
+
+:}
+
+action code
+{:
+    //public  Usuarios usu_comodin = new Usuarios();
+    //public  Hashtable<Integer, Usuarios> lst_usuarios = new Hashtable<Integer, Usuarios>();
+:} 
+
+terminal String left_par, right_par, menos , mas , por , div , id, enteros, combinado;
+non terminal new_temp S, E, T, F;
+
+start with S;
+
+S ::= E:a {: System.out.println("Sentencencia analizada correctamente. Sin errores");
+             System.out.print(a.C3D); 
+          :};
+
+E ::= E:a mas T:b {: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "+" + b.TMP); :}
+    | E:a menos T:b{: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "-" + b.TMP); :}
+    |T:a {: RESULT = a; :};
+
+T ::= T:a por F:b {: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "*" + b.TMP); :}
+    | T:a div F:b {: RESULT = new new_temp(true, a.C3D + b.C3D, " =" + a.TMP + "/" + b.TMP); :}
+    |F:a {: RESULT = a; :};
+
+F ::= left_par E:a right_par {: RESULT = a; :}
+    |id:a {: RESULT = new new_temp(String.valueOf(a), ""); :}
+    |enteros:a {:RESULT = new new_temp(String.valueOf(a), ""); :}
+    |combinado:a {:RESULT = new new_temp(String.valueOf(a), ""); :};
